@@ -1,0 +1,7 @@
+name = "tblite-int"
+
+[dependencies]
+mctc-lib.git = "https://github.com/grimme-lab/mctc-lib.git"
+tblite.git = "https://github.com/tblite/tblite.git"
+stdlib.git = "https://github.com/fortran-lang/stdlib.git"
+stdlib.branch = "stdlib-fpm"
