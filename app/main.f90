@@ -41,6 +41,7 @@ program integrator
       character(len=:), allocatable :: species1, species2
       logical :: hamiltonian = .false.
       real(wp) :: accuracy = 1.0_wp
+      real(wp) :: conv = aatoau
    end type int_config
 
    type(int_config) :: config
@@ -70,7 +71,7 @@ contains
       real(wp) :: xyz(3, 2)
 
       sym = [character(len=symbol_length):: config%species1, config%species2]
-      xyz = reshape([0.0_wp, 0.0_wp, 0.0_wp, config%distance*aatoau], [3, 2])
+      xyz = reshape([0.0_wp, 0.0_wp, 0.0_wp, config%distance*config%conv], [3, 2])
       call new(mol, sym, xyz)
 
       if (allocated(config%param)) then
@@ -162,7 +163,7 @@ contains
                exit
             end if
             iarg = iarg + 1
-            call get_argument(iarg, config%param)
+            call get_argument(iarg, config%method)
             if (.not.allocated(config%method)) then
                call fatal_error(error, "Missing argument for method")
                exit
@@ -179,6 +180,9 @@ contains
                call fatal_error(error, "Missing argument for param")
                exit
             end if
+
+         case("--bohr")
+            config%conv = 1.0_wp
 
          case("-o", "--output")
             iarg = iarg + 1
@@ -252,6 +256,7 @@ contains
          "                          Available methods: gfn1, gfn2, ipea1 (Default: gfn2)"//nl//&
          "      --param <file>      Parametrization file to use for calculation"//nl//&
          "      --hamiltonian       Calculate Hamiltonian instead of overlap integrals"//nl//&
+         "      --bohr              Use Bohr instead of Angstrom as distance unit"//nl//&
          "  -o, --output <file>     Output file for writing Hamiltonian"//nl//&
          "      --help              Show this help message"//nl//&
          ""
